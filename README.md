@@ -1,55 +1,41 @@
-# FTP
+# TCP File Transfer Lab
 
-Proyecto de cliente de escritorio y servidor de transferencia de archivos. El cliente usa Electron; el servidor implementa comandos propios sobre sockets TCP con el módulo `net` de Node.js. No debe asumirse compatibilidad con un cliente FTP estándar.
+An educational file-transfer project with a **Node.js TCP server** and an **Electron desktop client**. The server uses a custom command protocol over sockets; it is not a standards-compliant FTP server.
 
-## Estructura
+## Components
 
-- [Client-FTP](Client-FTP)
-- [Server-FTP](Server-FTP)
+| Directory | Purpose |
+| --- | --- |
+| [Server-FTP/](Server-FTP/) | TCP server, command dispatch, and filesystem operations. |
+| [Client-FTP/](Client-FTP/) | Electron client and connection handling. |
 
-## Preparación y uso
+The original directory names are retained so existing paths and scripts continue to resolve.
 
-Ejecuta `node index.js` desde `Server-FTP/` para iniciar el servidor. Revisa la dirección de conexión en `Client-FTP/main.js`. Los comandos de transferencia modifican archivos: prueba con un directorio desechable. El servidor requiere revisión del protocolo y validación de entradas antes de exponerlo a una red.
+## Run locally
 
-### Client-FTP
+Use Node.js and npm. Neither package pins a Node.js version; the Electron client depends on older tooling.
 
-Requiere Node.js. Este paquete no fija una versión del runtime; valida compatibilidad con las dependencias antes de actualizarlo.
+Start the server from its own directory:
+
+```sh
+cd Server-FTP
+node index.js
+```
+
+In another terminal, install and start the desktop client:
 
 ```sh
 cd Client-FTP
 npm ci
-npm run dev
+npm start
 ```
 
-Comandos declarados en [Client-FTP/package.json](Client-FTP/package.json):
+Review the connection settings in [Client-FTP/main.js](Client-FTP/main.js) and the listener in [Server-FTP/index.js](Server-FTP/index.js) before connecting. The client also provides `npm run dev`, which runs Electron through nodemon.
 
-| Comando | Acción |
-| --- | --- |
-| `npm run test` | `echo "Error: no test specified" && exit 1` |
-| `npm run start` | `electron .` |
-| `npm run dev` | `nodemon --exec npm start` |
+## Development notes
 
-El script `test` es un marcador inicial, no una suite de pruebas.
-
-### Server-FTP
-
-Requiere Node.js. Este paquete no fija una versión del runtime; valida compatibilidad con las dependencias antes de actualizarlo.
-
-```sh
-cd Server-FTP
-npm install
-```
-
-No hay un script de arranque declarado en este paquete. Revisa el punto de entrada indicado arriba antes de ejecutar el código.
-
-Comandos declarados en [Server-FTP/package.json](Server-FTP/package.json):
-
-| Comando | Acción |
-| --- | --- |
-| `npm run test` | `echo "Error: no test specified" && exit 1` |
-
-El script `test` es un marcador inicial, no una suite de pruebas.
-
-## Validación y estado
-
-Esta guía se contrastó con el árbol de archivos y los manifiestos del repositorio. No se ha validado una ejecución completa contra servicios externos, bases de datos o hardware. Las versiones y los scripts mostrados describen el código actual; no implican que sus dependencias antiguas sigan siendo compatibles.
+- Each component has its own `package.json`.
+- The server has no `start` script; invoke `node index.js` explicitly.
+- Both `test` scripts are placeholders, not test suites.
+- File-transfer commands modify local files. Use disposable test directories when exploring the protocol.
+- Input validation and protocol handling need further review before the server is exposed to a network. No end-to-end transfer test was performed during this documentation update.
